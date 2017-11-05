@@ -20,8 +20,13 @@ from rest_framework.permissions import(
 
     )
 
-from .models import Course
-from .serializers import CourseSerializer
+from .models import Course,Video
+from .serializers import (
+    CourseSerializer,
+    CourseDetailViewSerailizer,
+    VideoSerializer,
+    UpdateRatingsSerializer,
+    )
 # Create your views here.
 
 class GetListCourses(ListAPIView):
@@ -35,6 +40,8 @@ class GetListCourses(ListAPIView):
 
 
     def get_queryset(self, *args, **kwargs):
+
+        #Example : http://127.0.0.1:8000/api/getAllCourses/?q=android
         #queryset_list = super(PostListAPIView, self).get_queryset(*args, **kwargs)
         queryset_list = Course.objects.all() #filter(user=self.request.user)
         query = self.request.GET.get("q")
@@ -51,13 +58,32 @@ class CourseDetailView(RetrieveAPIView):
 
     permission_classes = [IsAuthenticated]
     queryset = Course.objects.all()
-    serializer_class = CourseSerializer
+
+    serializer_class = CourseDetailViewSerailizer
 
 
 class CourseUpdateView(UpdateAPIView):
     """update course, ratings"""
     permission_classes = [IsAuthenticated]
     queryset = Course.objects.all()
-    serializer_class = CourseSerializer
+    serializer_class = UpdateRatingsSerializer
     serializer = CourseSerializer()
     course_id = serializer.data.get('id')
+"""
+    def update(self, request, *args, **kwargs):
+        instance = self.get_object()
+        average =
+        instance.course_ratings_value = request.data.get("course_ratings_value")
+        instance.save()
+
+        serializer = self.get_serializer(instance)
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+
+        return Response(serializer.data)
+"""
+
+class getAllVideoView(ListAPIView):
+    permission_classes = [IsAuthenticated]
+    queryset = Video.objects.all()
+    serializer_class = VideoSerializer

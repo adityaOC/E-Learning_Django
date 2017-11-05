@@ -6,6 +6,8 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 
 from django.contrib import admin
 
+
+
 # Create your models here.
 
 class UserProfileManager(BaseUserManager):
@@ -117,33 +119,18 @@ class TeacherProfile(UserProfile):
 
         averageRatings = models.FloatField(validators = [MinValueValidator(0.0), MaxValueValidator(5.0)])
 
-"""
-class CourseModelManager(BaseUserManager):
 
-    def creat_course(self,course_name):
-        # Create a new user object.
-        course = self.model(
-
-            course_name=course_name,
-
-        )
-
-
-
-        course.save(using=self._db)
-        return course
-
-
-"""
 
 class Course(models.Model):
 
     course_name = models.CharField(max_length=255)
     course_author =  models.ForeignKey('TeacherProfile', on_delete=models.CASCADE)
     course_Ratings = models.FloatField(validators = [MinValueValidator(0.0), MaxValueValidator(5.0)])
-    course_videos =  models.ForeignKey('Video', on_delete=models.CASCADE,blank = False)
-    REQUIRED_FIELDS = ['course_videos']
-
+    
+    #course_videos =  models.ForeignKey('Video', on_delete=models.CASCADE,blank = False)
+    #REQUIRED_FIELDS = ['course_videos']
+    #course_videos = Video.objects.filter(reporter__pk=self.id)
+    #course_videos = Video.objects.all()
 
     def __str__(self):
         """What to show when we output an object as a string."""
@@ -156,32 +143,11 @@ class Video(models.Model):
     video_name =  models.CharField(max_length=255)
     video_link =  models.CharField(max_length=255)
     video_description =  models.CharField(max_length=255)
-    #video_course =  models.ForeignKey('Course', on_delete=models.CASCADE,blank = False)
+    video_course =  models.ForeignKey('Course',related_name='Video_Relation', on_delete=models.CASCADE,blank = False)
+
 
     def __str__(self):
         """What to show when we output an object as a string."""
 
         return self.video_name
     #video_parent_course =  models.ForeignKey('Course', on_delete=models.CASCADE)
-
-class Book(models.Model):
-   title = models.CharField(max_length=255)
-
-class Review(models.Model):
-   book = models.ForeignKey(Book, related_name='reviews')
-   review = models.TextField()
-class ReviewInline(admin.StackedInline):
-    model = Review
-
-class BookAdmin(admin.ModelAdmin):
-    inlines = [
-        ReviewInline,
-    ]
-
-
-"""
-class KeyValCourses(models.Model):
-    container = models.ForeignKey(Dicty, db_index=True)
-    key       = models.CharField(max_length=240, db_index=True)
-    value     = models.CharField(max_length=240, db_index=True)
-"""
