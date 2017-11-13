@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from . import appConstants
 from rest_framework import viewsets
 from rest_framework.authtoken.serializers import AuthTokenSerializer
 from rest_framework.authtoken.views import ObtainAuthToken
@@ -63,3 +64,42 @@ class GetListCourses(ListAPIView):
 
                     ).distinct()
         return queryset_list
+
+class CourseDetailView(RetrieveAPIView):
+    """get single course"""
+
+    permission_classes = [IsAuthenticated]
+    queryset = Course.objects.all()
+
+    serializer_class = CourseDetailViewSerailizer
+
+
+class CourseUpdateView(UpdateAPIView):
+    """update course, ratings"""
+    permission_classes = [IsAuthenticated]
+    queryset = Course.objects.all()
+    serializer_class = UpdateRatingsSerializer
+    serializer = CourseSerializer()
+    course_id = serializer.data.get('id')
+
+    def update(self, request, *args, **kwargs):
+        instance = self.get_object()
+        #average =
+        instance.course_ratings_value = request.data.get("course_ratings_value")
+        instance.save()
+
+        serializer = self.get_serializer(instance)
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+
+        return Response(serializer.data)
+
+class getAllVideoView(ListAPIView):
+    permission_classes = [IsAuthenticated]
+    queryset = Video.objects.all()
+    serializer_class = VideoSerializer
+
+class HeroBannerAPIView(ListAPIView):
+    permission_classes = [IsAuthenticated]
+    queryset = Course.objects.all().order_by('-course_created_at')[:appConstants.HeroBanner_API_Fetch_Number]
+    serializer_class = CourseSerializer
