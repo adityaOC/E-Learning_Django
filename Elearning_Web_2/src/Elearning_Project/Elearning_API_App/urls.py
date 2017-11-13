@@ -16,7 +16,7 @@ router = DefaultRouter()
 router.register('loginR',views.LoginViewSet,base_name='loginR')
 
 urlpatterns = [
-    #url(r'^getAllCourses/',views.GetListCourses.as_view()),
+    url(r'^getAllCourses/',views.GetListCourses.as_view()),
     #url(r'^herobanner/',views.HeroBannerAPIView.as_view()),
     #url(r'^courseDetail/(?P<pk>\d+)/$', views.CourseDetailView.as_view(), name='detailCourse'),
     #url(r'^course/(?P<pk>\d+)/update/$', views.CourseUpdateView.as_view(), name='updateCourse'),

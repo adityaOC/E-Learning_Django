@@ -48,7 +48,7 @@ class UserProfileManager(BaseUserManager):
             first_name,
             last_name,
             password,
-            
+
 
         )
 
@@ -105,3 +105,53 @@ class UserProfile(AbstractBaseUser, PermissionsMixin):
         """What to show when we output an object as a string."""
 
         return self.email
+
+class StudentProfile(UserProfile):
+
+        subscribedCourses =JSONField()
+
+        def subscribeCourse(self,courseID):
+            self.subscribedCourses.append(courseID)
+
+        def getAllSubscribedCourses(self):
+            return self.subscribedCourses
+
+
+class TeacherProfile(UserProfile):
+
+        """averageRatings = models.IntegerField(validators=[MinValueValidator(0),
+                                       MaxValueValidator(5)],default = 0.0)"""
+
+        averageRatings = models.FloatField(validators = [MinValueValidator(0.0), MaxValueValidator(5.0)])
+
+
+
+class Course(models.Model):
+
+    course_name = models.CharField(max_length=255)
+    course_author =  models.ForeignKey('TeacherProfile', on_delete=models.CASCADE)
+    course_Ratings = models.FloatField(validators = [MinValueValidator(0.0), MaxValueValidator(5.0)])
+    course_created_at = models.DateTimeField(auto_now_add=True)
+    #course_videos =  models.ForeignKey('Video', on_delete=models.CASCADE,blank = False)
+    #REQUIRED_FIELDS = ['course_videos']
+    #course_videos = Video.objects.filter(reporter__pk=self.id)
+    #course_videos = Video.objects.all()
+
+    def __str__(self):
+        """What to show when we output an object as a string."""
+
+        return self.course_name
+
+
+class Video(models.Model):
+
+    video_name =  models.CharField(max_length=255)
+    video_link =  models.CharField(max_length=255)
+    video_description =  models.CharField(max_length=255)
+    video_course =  models.ForeignKey('Course',related_name='Video_Relation', on_delete=models.CASCADE,blank = False)
+    video_created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        """What to show when we output an object as a string."""
+
+        return self.video_name
