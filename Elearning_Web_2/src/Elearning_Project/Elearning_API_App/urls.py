@@ -12,14 +12,15 @@ router.register('login',views.LoginViewSet,base_name='login')
 router.register('logout',views.LogoutViewSet,base_name='logout')
 router.register('course',views.CourseViewSet,base_name='course')
 """
-
+router = DefaultRouter()
+router.register('loginR',views.LoginViewSet,base_name='loginR')
 
 urlpatterns = [
     #url(r'^getAllCourses/',views.GetListCourses.as_view()),
     #url(r'^herobanner/',views.HeroBannerAPIView.as_view()),
     #url(r'^courseDetail/(?P<pk>\d+)/$', views.CourseDetailView.as_view(), name='detailCourse'),
     #url(r'^course/(?P<pk>\d+)/update/$', views.CourseUpdateView.as_view(), name='updateCourse'),
-    #url(r'',include(router.urls)),
+    url(r'',include(router.urls)),
     #search query
 
 
