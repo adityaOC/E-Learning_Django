@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from . import appConstants
+from django.db.models import Q
 from rest_framework import viewsets
 from rest_framework.authtoken.serializers import AuthTokenSerializer
 from rest_framework.authtoken.views import ObtainAuthToken
@@ -31,6 +31,7 @@ from rest_framework.filters import (
 
     )
 from .models import Course,Video
+from . import appConstants
 
 class LoginViewSet(viewsets.ViewSet):
 
@@ -45,12 +46,8 @@ class LoginViewSet(viewsets.ViewSet):
 class GetListCourses(ListAPIView):
     """get all courses"""
     permission_classes = [IsAuthenticated]
-    queryset = Course.objects.all()
     serializer_class = CourseSerializer
-    filter_backends = [SearchFilter]
-    filter_fields = ['course_name']
-    #http://example.com/api/users?search=russell
-
+    
 
     def get_queryset(self, *args, **kwargs):
 
