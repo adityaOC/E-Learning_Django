@@ -6,6 +6,7 @@ from rest_framework.authtoken.views import ObtainAuthToken
 
 from django.contrib.auth import logout
 from django.contrib.auth import authenticate, login
+from rest_framework.response import Response
 from rest_framework.generics import (
     ListAPIView,
     RetrieveAPIView,
@@ -30,7 +31,11 @@ from rest_framework.filters import (
 
 
     )
-from .models import Course,Video
+from .models import (
+    Course,
+    Video,
+    CourseRatings,
+    )
 from . import appConstants
 
 class LoginViewSet(viewsets.ViewSet):
@@ -47,7 +52,7 @@ class GetListCourses(ListAPIView):
     """get all courses"""
     permission_classes = [IsAuthenticated]
     serializer_class = CourseSerializer
-    
+
 
     def get_queryset(self, *args, **kwargs):
 
@@ -74,22 +79,25 @@ class CourseDetailView(RetrieveAPIView):
 class CourseUpdateView(UpdateAPIView):
     """update course, ratings"""
     permission_classes = [IsAuthenticated]
-    queryset = Course.objects.all()
+    queryset = CourseRatings.objects.all()
     serializer_class = UpdateRatingsSerializer
-    serializer = CourseSerializer()
-    course_id = serializer.data.get('id')
+    serializer = UpdateRatingsSerializer()
+    #course_id = serializer.data.get('id')
 
     def update(self, request, *args, **kwargs):
         instance = self.get_object()
-        #average =
-        instance.course_ratings_value = request.data.get("course_ratings_value")
-        instance.save()
+        rating_temp = request.POST.get("rating_give_by_user", None)
 
-        serializer = self.get_serializer(instance)
-        serializer.is_valid(raise_exception=True)
-        self.perform_update(serializer)
+        if rating_temp and (float(rating_temp)>=0.0 and float(rating_temp)<=5.0):
+            instance.total_number = instance.total_number + 1
+            instance.sum_of_all_ratings =instance.sum_of_all_ratings + float(rating_temp)
+            instance._ratings_tobeshown = instance.sum_of_all_ratings/instance.total_number
+            instance.save()
 
-        return Response(serializer.data)
+        if rating_temp and (float(rating_temp)>=0.0 and float(rating_temp)<=5.0):
+            return Response({'status': 1,'Message':'Success'})
+        else:
+            return Response({'status': 0,'Error':'Invalid request'})
 
 class getAllVideoView(ListAPIView):
     permission_classes = [IsAuthenticated]

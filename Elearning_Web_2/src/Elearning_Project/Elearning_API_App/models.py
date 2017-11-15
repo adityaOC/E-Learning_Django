@@ -132,6 +132,7 @@ class Course(models.Model):
     course_author =  models.ForeignKey('TeacherProfile', on_delete=models.CASCADE)
     course_Ratings = models.FloatField(validators = [MinValueValidator(0.0), MaxValueValidator(5.0)])
     course_created_at = models.DateTimeField(auto_now_add=True)
+
     #course_videos =  models.ForeignKey('Video', on_delete=models.CASCADE,blank = False)
     #REQUIRED_FIELDS = ['course_videos']
     #course_videos = Video.objects.filter(reporter__pk=self.id)
@@ -155,3 +156,14 @@ class Video(models.Model):
         """What to show when we output an object as a string."""
 
         return self.video_name
+
+class CourseRatings(models.Model):
+
+    _ratings_tobeshown = models.FloatField(default=0.0,db_column="ratings_tobeshown")
+    rating_give_by_user = models.FloatField(default=0.0,validators = [MinValueValidator(0.0), MaxValueValidator(5.0)])
+    sum_of_all_ratings =models.FloatField(null=True, blank=True,default=0.0)
+    total_number = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
+    course =  models.ForeignKey('Course',related_name='Course_Ratings_Relation', on_delete=models.CASCADE,blank = True)
+
+    def __str__(self):
+        return "rating_{}".format(self.id)

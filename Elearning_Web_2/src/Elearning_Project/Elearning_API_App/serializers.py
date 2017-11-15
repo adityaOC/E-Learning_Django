@@ -1,8 +1,15 @@
 from rest_framework.serializers import ModelSerializer
 from rest_framework import serializers
-from .models import Course,Video
+from .models import Course,Video,CourseRatings
 
+class RatingsSerializer(ModelSerializer):
 
+    class Meta:
+        model = CourseRatings
+        fields= [
+            'rating_give_by_user',
+
+        ]
 class VideoSerializer(ModelSerializer):
 
 
@@ -34,6 +41,7 @@ class CourseSerializer(ModelSerializer):
 
 class CourseDetailViewSerailizer(ModelSerializer):
     course_videos = VideoSerializer(source='Video_Relation', many=True)
+    course_ratings = RatingsSerializer(source='Course_Ratings_Relation', many=True)
     class Meta:
         model = Course
         fields= [
@@ -42,6 +50,7 @@ class CourseDetailViewSerailizer(ModelSerializer):
             'course_author',
             'course_Ratings',
             'course_videos',
+            'course_ratings',
 
 
         ]
@@ -50,10 +59,10 @@ class CourseDetailViewSerailizer(ModelSerializer):
 class UpdateRatingsSerializer(ModelSerializer):
 
     class Meta:
-        model = Course
+        model = CourseRatings
         fields= [
-
-            'course_Ratings',
+            'id',
+            'rating_give_by_user',
 
 
         ]
