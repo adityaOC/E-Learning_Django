@@ -113,15 +113,19 @@ class RatingView(UpdateAPIView):
 
         course_primaryKey = kwargs['pk']
         current_user_id = request.user.id
-        #return Response({'status': 1,'current_user_id':current_user_id})
-        instance = Rating_Course_User_Bridge.objects.get(course_id=course_primaryKey,user_id = current_user_id)
+        #return Response({'course_primaryKey': course_primaryKey,'current_user_id':current_user_id})
 
-        if instance:#if record already exist
+        instance_count=Rating_Course_User_Bridge.objects.filter(course_id=course_primaryKey,user_id = current_user_id).count()
 
+
+        if instance_count > 0:#if record already exist
+             #return Response({'message': "record already exist"})
+             instance = Rating_Course_User_Bridge.objects.get(course_id=course_primaryKey,user_id = current_user_id)
              instance.rating_value = request.POST.get("rating_give_by_user", None)
              instance.save()
-             return Response({'status': 1,'Message':course_primaryKey})
+             return Response({'status': 1,'Message':"Rating updated"})
         else:#if record does not exist then create it
+             #return Response({'message': "create record else"})
              course = Course.objects.get(pk=course_primaryKey)
              course_count = Course.objects.filter(pk=course_primaryKey).count()
 
@@ -133,7 +137,7 @@ class RatingView(UpdateAPIView):
              rating = Rating_Course_User_Bridge.objects.create(course=course,user=user,rating_value=rating_Value)
 
 
-             return Response({'status': 1,'rating.id':rating.id})
+             return Response({'status': 1,'rating.id':rating.id,'message':"ratings created!"})
         #instance.save()
 
 
