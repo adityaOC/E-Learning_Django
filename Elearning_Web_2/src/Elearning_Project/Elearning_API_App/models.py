@@ -104,7 +104,7 @@ class UserProfile(AbstractBaseUser, PermissionsMixin):
     def __str__(self):
         """What to show when we output an object as a string."""
 
-        return self.email
+        return "{}_{}".format(self.email,self.id)
 
 class StudentProfile(UserProfile):
 
@@ -132,11 +132,8 @@ class Course(models.Model):
     course_author =  models.ForeignKey('TeacherProfile', on_delete=models.CASCADE)
     course_Ratings = models.FloatField(validators = [MinValueValidator(0.0), MaxValueValidator(5.0)])
     course_created_at = models.DateTimeField(auto_now_add=True)
+    course_avegrage_ratings = models.FloatField(default= 0.0)
 
-    #course_videos =  models.ForeignKey('Video', on_delete=models.CASCADE,blank = False)
-    #REQUIRED_FIELDS = ['course_videos']
-    #course_videos = Video.objects.filter(reporter__pk=self.id)
-    #course_videos = Video.objects.all()
 
     def __str__(self):
         """What to show when we output an object as a string."""
@@ -167,3 +164,9 @@ class CourseRatings(models.Model):
 
     def __str__(self):
         return "rating_{}".format(self.id)
+
+class Rating_Course_User_Bridge(models.Model):
+
+    course = models.ForeignKey('Course',related_name='Course_Ratings_Bridge_Relation', on_delete=models.CASCADE,blank = True)
+    user =  models.ForeignKey('UserProfile',related_name='UserProfile_Ratings_Bridge_Relation', on_delete=models.CASCADE,blank = True)
+    rating_value =  models.FloatField()

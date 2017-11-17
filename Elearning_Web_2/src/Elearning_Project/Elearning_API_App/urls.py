@@ -15,12 +15,21 @@ router.register('course',views.CourseViewSet,base_name='course')
 router = DefaultRouter()
 router.register('loginR',views.LoginViewSet,base_name='loginR')
 
+#test url
+
+
+
 urlpatterns = [
     url(r'^getAllCourses/',views.GetListCourses.as_view()),
     url(r'^herobanner/',views.HeroBannerAPIView.as_view()),
     url(r'^courseDetail/(?P<pk>\d+)/$', views.CourseDetailView.as_view(), name='detailCourse'),
     url(r'^course/(?P<pk>\d+)/update/$', views.CourseUpdateView.as_view(), name='updateCourse'),
+    url(r'^ratings/(?P<pk>\d+)/update/',views.RatingView.as_view()),
+
     url(r'',include(router.urls)),
+
+    #test urls
+    url(r'^getAllRatings/',views.getAllRatings.as_view()), 
     #search query
 
 

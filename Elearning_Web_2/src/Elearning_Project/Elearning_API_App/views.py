@@ -25,6 +25,7 @@ from .serializers import (
     CourseDetailViewSerailizer,
     VideoSerializer,
     UpdateRatingsSerializer,
+    RatingBridgeSerializer,
     )
 from rest_framework.filters import (
     SearchFilter,
@@ -35,6 +36,9 @@ from .models import (
     Course,
     Video,
     CourseRatings,
+    Rating_Course_User_Bridge,
+    StudentProfile,
+    UserProfile,
     )
 from . import appConstants
 
@@ -50,7 +54,7 @@ class LoginViewSet(viewsets.ViewSet):
 
 class GetListCourses(ListAPIView):
     """get all courses"""
-    permission_classes = [IsAuthenticated]
+    #permission_classes = [IsAuthenticated]
     serializer_class = CourseSerializer
 
 
@@ -70,7 +74,7 @@ class GetListCourses(ListAPIView):
 class CourseDetailView(RetrieveAPIView):
     """get single course"""
 
-    permission_classes = [IsAuthenticated]
+    #permission_classes = [IsAuthenticated]
     queryset = Course.objects.all()
 
     serializer_class = CourseDetailViewSerailizer
@@ -78,7 +82,7 @@ class CourseDetailView(RetrieveAPIView):
 
 class CourseUpdateView(UpdateAPIView):
     """update course, ratings"""
-    permission_classes = [IsAuthenticated]
+    #permission_classes = [IsAuthenticated]
     queryset = CourseRatings.objects.all()
     serializer_class = UpdateRatingsSerializer
     serializer = UpdateRatingsSerializer()
@@ -99,12 +103,53 @@ class CourseUpdateView(UpdateAPIView):
         else:
             return Response({'status': 0,'Error':'Invalid request'})
 
+class RatingView(UpdateAPIView):
+    #permission_classes = [IsAuthenticated,]
+    queryset = Rating_Course_User_Bridge.objects.all()
+    serializer_class = UpdateRatingsSerializer
+    serializer = UpdateRatingsSerializer()
+
+    def update(self, request, *args, **kwargs):
+
+        course_primaryKey = kwargs['pk']
+        current_user_id = request.user.id
+        #return Response({'status': 1,'current_user_id':current_user_id})
+        instance = Rating_Course_User_Bridge.objects.get(course_id=course_primaryKey,user_id = current_user_id)
+
+        if instance:#if record already exist
+
+             instance.rating_value = request.POST.get("rating_give_by_user", None)
+             instance.save()
+             return Response({'status': 1,'Message':course_primaryKey})
+        else:#if record does not exist then create it
+             course = Course.objects.get(pk=course_primaryKey)
+             course_count = Course.objects.filter(pk=course_primaryKey).count()
+
+             user_count = UserProfile.objects.filter(pk=current_user_id).count()
+             user = UserProfile.objects.get(pk=current_user_id)
+
+
+             rating_Value = request.POST.get("rating_give_by_user", None)
+             rating = Rating_Course_User_Bridge.objects.create(course=course,user=user,rating_value=rating_Value)
+
+
+             return Response({'status': 1,'rating.id':rating.id})
+        #instance.save()
+
+
+
+
 class getAllVideoView(ListAPIView):
-    permission_classes = [IsAuthenticated]
+    #permission_classes = [IsAuthenticated]
     queryset = Video.objects.all()
     serializer_class = VideoSerializer
 
 class HeroBannerAPIView(ListAPIView):
-    permission_classes = [IsAuthenticated]
+    #permission_classes = [IsAuthenticated]
     queryset = Course.objects.all().order_by('-course_created_at')[:appConstants.HeroBanner_API_Fetch_Number]
     serializer_class = CourseSerializer
+
+
+class getAllRatings(ListAPIView):
+        queryset = Rating_Course_User_Bridge.objects.all()
+        serializer_class = RatingBridgeSerializer
