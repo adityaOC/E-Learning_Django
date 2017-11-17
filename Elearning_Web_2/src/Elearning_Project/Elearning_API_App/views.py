@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from django.db.models import Q
+from django.db.models import Sum
 from rest_framework import viewsets
 from rest_framework.authtoken.serializers import AuthTokenSerializer
 from rest_framework.authtoken.views import ObtainAuthToken
@@ -109,6 +110,20 @@ class RatingView(UpdateAPIView):
     serializer_class = UpdateRatingsSerializer
     serializer = UpdateRatingsSerializer()
 
+    def updateCourserRatings(self,courseID):
+        #ItemPrice.objects.aggregate(Sum('price'))
+        total_ratings = Rating_Course_User_Bridge.objects.filter(course_id=courseID).count()
+        sum_of_all_ratings = Rating_Course_User_Bridge.objects.aggregate(Sum('rating_value'))
+        return Response({'total_ratings': total_ratings,'sum_of_all_ratings':sum_of_all_ratings})
+
+        course_avegrage_ratings = sum_of_all_ratings/total_ratings
+
+        course_filter = Course.objects.filter(id=courseID).count()
+        if course_filter > 0:
+            course = Course.objects.get(id=courseID)
+            course.course_avegrage_ratings = course_avegrage_ratings
+            course.save()
+
     def update(self, request, *args, **kwargs):
 
         course_primaryKey = kwargs['pk']
@@ -123,6 +138,17 @@ class RatingView(UpdateAPIView):
              instance = Rating_Course_User_Bridge.objects.get(course_id=course_primaryKey,user_id = current_user_id)
              instance.rating_value = request.POST.get("rating_give_by_user", None)
              instance.save()
+
+             total_ratings = Rating_Course_User_Bridge.objects.filter(course_id=course_primaryKey).count()
+             sum_of_all_ratings= Rating_Course_User_Bridge.objects.filter(course_id=course_primaryKey).aggregate(Sum('rating_value'))
+
+             course_avegrage_ratings = sum_of_all_ratings['rating_value__sum']/total_ratings
+             course_filter = Course.objects.filter(id=course_primaryKey).count()
+             if course_filter > 0:
+                 course = Course.objects.get(id=course_primaryKey)
+                 course.course_avegrage_ratings = course_avegrage_ratings
+                 course.save()
+
              return Response({'status': 1,'Message':"Rating updated"})
         else:#if record does not exist then create it
              #return Response({'message': "create record else"})
@@ -136,6 +162,16 @@ class RatingView(UpdateAPIView):
              rating_Value = request.POST.get("rating_give_by_user", None)
              rating = Rating_Course_User_Bridge.objects.create(course=course,user=user,rating_value=rating_Value)
 
+             #update course models
+             total_ratings = Rating_Course_User_Bridge.objects.filter(course_id=course_primaryKey).count()
+             sum_of_all_ratings= Rating_Course_User_Bridge.objects.filter(course_id=course_primaryKey).aggregate(Sum('rating_value'))
+
+             course_avegrage_ratings = sum_of_all_ratings['rating_value__sum']/total_ratings
+             course_filter = Course.objects.filter(id=course_primaryKey).count()
+             if course_filter > 0:
+                  course = Course.objects.get(id=course_primaryKey)
+                  course.course_avegrage_ratings = course_avegrage_ratings
+                  course.save()
 
              return Response({'status': 1,'rating.id':rating.id,'message':"ratings created!"})
         #instance.save()

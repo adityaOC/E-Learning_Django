@@ -39,6 +39,7 @@ class CourseSerializer(ModelSerializer):
             'course_name',
             'course_author',
             'course_Ratings',
+            'course_avegrage_ratings',
 
 
 
