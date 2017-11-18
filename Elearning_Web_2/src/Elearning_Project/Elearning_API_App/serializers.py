@@ -38,7 +38,6 @@ class CourseSerializer(ModelSerializer):
             'id',
             'course_name',
             'course_author',
-            'course_Ratings',
             'course_avegrage_ratings',
 
 
@@ -87,3 +86,26 @@ class RatingBridgeSerializer(ModelSerializer):
 
 
     ]
+
+
+class UserProfileSerializer(serializers.ModelSerializer):
+    """A serializer for our user profile objects."""
+
+    class Meta:
+        model = UserProfile
+        fields = ('id', 'email', 'first_name','last_name', 'password')
+        extra_kwargs = {'password': {'write_only': True}}
+
+    def create(self, validated_data):
+        """Create and return a new user."""
+
+        user = UserProfile(
+            email=validated_data['email'],
+            first_name=validated_data['first_name'],
+            last_name=validated_data['last_name']
+        )
+
+        user.set_password(validated_data['password'])
+        user.save()
+
+        return user

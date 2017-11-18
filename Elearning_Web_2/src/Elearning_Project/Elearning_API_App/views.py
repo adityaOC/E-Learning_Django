@@ -24,9 +24,11 @@ from rest_framework.permissions import(
 from .serializers import (
     CourseSerializer,
     CourseDetailViewSerailizer,
+    UserProfileSerializer,
     VideoSerializer,
     UpdateRatingsSerializer,
     RatingBridgeSerializer,
+
     )
 from rest_framework.filters import (
     SearchFilter,
@@ -55,7 +57,7 @@ class LoginViewSet(viewsets.ViewSet):
 
 class GetListCourses(ListAPIView):
     """get all courses"""
-    #permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated]
     serializer_class = CourseSerializer
 
 
@@ -75,37 +77,14 @@ class GetListCourses(ListAPIView):
 class CourseDetailView(RetrieveAPIView):
     """get single course"""
 
-    #permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated]
     queryset = Course.objects.all()
 
     serializer_class = CourseDetailViewSerailizer
 
 
-class CourseUpdateView(UpdateAPIView):
-    """update course, ratings"""
-    #permission_classes = [IsAuthenticated]
-    queryset = CourseRatings.objects.all()
-    serializer_class = UpdateRatingsSerializer
-    serializer = UpdateRatingsSerializer()
-    #course_id = serializer.data.get('id')
-
-    def update(self, request, *args, **kwargs):
-        instance = self.get_object()
-        rating_temp = request.POST.get("rating_give_by_user", None)
-
-        if rating_temp and (float(rating_temp)>=0.0 and float(rating_temp)<=5.0):
-            instance.total_number = instance.total_number + 1
-            instance.sum_of_all_ratings =instance.sum_of_all_ratings + float(rating_temp)
-            instance._ratings_tobeshown = instance.sum_of_all_ratings/instance.total_number
-            instance.save()
-
-        if rating_temp and (float(rating_temp)>=0.0 and float(rating_temp)<=5.0):
-            return Response({'status': 1,'Message':'Success'})
-        else:
-            return Response({'status': 0,'Error':'Invalid request'})
-
-class RatingView(UpdateAPIView):
-    #permission_classes = [IsAuthenticated,]
+class RatingUpdateView(UpdateAPIView):
+    permission_classes = [IsAuthenticated,]
     queryset = Rating_Course_User_Bridge.objects.all()
     serializer_class = UpdateRatingsSerializer
     serializer = UpdateRatingsSerializer()
@@ -193,3 +172,10 @@ class HeroBannerAPIView(ListAPIView):
 class getAllRatings(ListAPIView):
         queryset = Rating_Course_User_Bridge.objects.all()
         serializer_class = RatingBridgeSerializer
+
+
+class UserRegistrationViewSet(viewsets.ModelViewSet):
+    """Handles creating, creating and updating profiles."""
+
+    serializer_class = UserProfileSerializer
+    queryset = UserProfile.objects.all()

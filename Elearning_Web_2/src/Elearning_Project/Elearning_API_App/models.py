@@ -130,7 +130,6 @@ class Course(models.Model):
 
     course_name = models.CharField(max_length=255)
     course_author =  models.ForeignKey('TeacherProfile', on_delete=models.CASCADE)
-    course_Ratings = models.FloatField(validators = [MinValueValidator(0.0), MaxValueValidator(5.0)])
     course_created_at = models.DateTimeField(auto_now_add=True)
     course_avegrage_ratings = models.FloatField(default= 0.0)
 
