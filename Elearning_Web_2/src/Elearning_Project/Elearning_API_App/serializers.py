@@ -7,7 +7,7 @@ from .models import (
     Rating_Course_User_Bridge,
     UserProfile,
     )
-
+from rest_framework.response import Response
 class RatingsSerializer(ModelSerializer):
 
     class Meta:
@@ -30,6 +30,8 @@ class VideoSerializer(ModelSerializer):
 
         ]
 
+
+
 class CourseSerializer(ModelSerializer):
 
     class Meta:
@@ -40,11 +42,12 @@ class CourseSerializer(ModelSerializer):
             'course_author',
             'course_avegrage_ratings',
 
-
-
         ]
-
-
+"""
+class ItemsSerializer(serializers.Serializer):
+    courses = serializers.ListField(child=CourseSerializer())
+    #courses = CourseSerializer(many=True)
+"""
 class CourseDetailViewSerailizer(ModelSerializer):
     course_videos = VideoSerializer(source='Video_Relation', many=True)
     course_ratings = RatingsSerializer(source='Course_Ratings_Relation', many=True)
@@ -54,7 +57,7 @@ class CourseDetailViewSerailizer(ModelSerializer):
             'id',
             'course_name',
             'course_author',
-            'course_Ratings',
+            #'course_Ratings',
             'course_videos',
             'course_ratings',
 
@@ -108,4 +111,5 @@ class UserProfileSerializer(serializers.ModelSerializer):
         user.set_password(validated_data['password'])
         user.save()
 
+    
         return user

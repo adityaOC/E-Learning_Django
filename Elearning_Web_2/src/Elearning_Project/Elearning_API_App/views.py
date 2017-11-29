@@ -29,6 +29,7 @@ from .serializers import (
     UpdateRatingsSerializer,
     RatingBridgeSerializer,
 
+
     )
 from rest_framework.filters import (
     SearchFilter,
@@ -59,6 +60,7 @@ class GetListCourses(ListAPIView):
     """get all courses"""
     permission_classes = [IsAuthenticated]
     serializer_class = CourseSerializer
+    #serializer_class = ItemsSerializer
 
 
     def get_queryset(self, *args, **kwargs):
@@ -77,14 +79,14 @@ class GetListCourses(ListAPIView):
 class CourseDetailView(RetrieveAPIView):
     """get single course"""
 
-    permission_classes = [IsAuthenticated]
+    #permission_classes = [IsAuthenticated]
     queryset = Course.objects.all()
 
     serializer_class = CourseDetailViewSerailizer
 
 
 class RatingUpdateView(UpdateAPIView):
-    permission_classes = [IsAuthenticated,]
+    #permission_classes = [IsAuthenticated,]
     queryset = Rating_Course_User_Bridge.objects.all()
     serializer_class = UpdateRatingsSerializer
     serializer = UpdateRatingsSerializer()
@@ -107,11 +109,11 @@ class RatingUpdateView(UpdateAPIView):
 
         course_primaryKey = kwargs['pk']
         current_user_id = request.user.id
-        #return Response({'course_primaryKey': course_primaryKey,'current_user_id':current_user_id})
+
 
         instance_count=Rating_Course_User_Bridge.objects.filter(course_id=course_primaryKey,user_id = current_user_id).count()
 
-
+        #return Response({'course_primaryKey': course_primaryKey,'current_user_id':current_user_id})
         if instance_count > 0:#if record already exist
              #return Response({'message': "record already exist"})
              instance = Rating_Course_User_Bridge.objects.get(course_id=course_primaryKey,user_id = current_user_id)
@@ -123,7 +125,9 @@ class RatingUpdateView(UpdateAPIView):
 
              course_avegrage_ratings = sum_of_all_ratings['rating_value__sum']/total_ratings
              course_filter = Course.objects.filter(id=course_primaryKey).count()
+
              if course_filter > 0:
+
                  course = Course.objects.get(id=course_primaryKey)
                  course.course_avegrage_ratings = course_avegrage_ratings
                  course.save()
@@ -152,7 +156,7 @@ class RatingUpdateView(UpdateAPIView):
                   course.course_avegrage_ratings = course_avegrage_ratings
                   course.save()
 
-             return Response({'status': 1,'rating.id':rating.id,'message':"ratings created!"})
+             return Response({'status': 1,'rating.id':rating.id,'Message':"ratings created!"})
         #instance.save()
 
 

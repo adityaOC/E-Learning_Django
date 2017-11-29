@@ -25,7 +25,7 @@ SECRET_KEY = 'tecfb^3rl25y&z6-2kfk+d%4k^y_z0&bu3i-&scgo=7c%r5k+5'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -129,5 +129,5 @@ REST_FRAMEWORK = {
    'DEFAULT_AUTHENTICATION_CLASSES': (
        'rest_framework.authentication.TokenAuthentication',
    ),
-   
+
 }
