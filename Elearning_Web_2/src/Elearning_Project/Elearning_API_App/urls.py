@@ -28,6 +28,7 @@ urlpatterns = [
 
     #test urls
     url(r'^test/getAllRatings/',views.getAllRatings.as_view()),
+    url(r'^test/teachers/',views.getAllTeachers.as_view()),
 
     #search query
 

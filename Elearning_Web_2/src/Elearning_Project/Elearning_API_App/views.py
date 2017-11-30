@@ -28,6 +28,7 @@ from .serializers import (
     VideoSerializer,
     UpdateRatingsSerializer,
     RatingBridgeSerializer,
+    AuthorSerializer,
 
 
     )
@@ -43,6 +44,7 @@ from .models import (
     Rating_Course_User_Bridge,
     StudentProfile,
     UserProfile,
+    TeacherProfile,
     )
 from . import appConstants
 
@@ -117,7 +119,7 @@ class RatingUpdateView(UpdateAPIView):
         if instance_count > 0:#if record already exist
              #return Response({'message': "record already exist"})
              instance = Rating_Course_User_Bridge.objects.get(course_id=course_primaryKey,user_id = current_user_id)
-        
+
              #instance.rating_value = request.POST.get("rating_give_by_user", None)
              instance.rating_value = request.data['rating_give_by_user'];
              instance.save()
@@ -185,3 +187,7 @@ class UserRegistrationViewSet(viewsets.ModelViewSet):
 
     serializer_class = UserProfileSerializer
     queryset = UserProfile.objects.all()
+
+class getAllTeachers(ListAPIView):
+    queryset = UserProfile.objects.all()
+    serializer_class = UserProfileSerializer
