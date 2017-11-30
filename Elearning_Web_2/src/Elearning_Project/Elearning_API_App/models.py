@@ -132,6 +132,7 @@ class Course(models.Model):
     #course_author =  models.ForeignKey('UserProfile', related_name='Type1_Relation',on_delete=models.CASCADE)
     course_created_at = models.DateTimeField(auto_now_add=True)
     course_avegrage_ratings = models.FloatField(default= 0.0)
+    course_thumbnail_url = models.CharField(max_length=255,default="https://www.python.org/static/opengraph-icon-200x200.png")
 
 
     def __str__(self):

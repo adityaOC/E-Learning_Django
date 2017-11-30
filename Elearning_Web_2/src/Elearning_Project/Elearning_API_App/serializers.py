@@ -41,6 +41,7 @@ class CourseSerializer(ModelSerializer):
             'id',
             'course_name',
             'course_avegrage_ratings',
+            'course_thumbnail_url',
 
         ]
 
@@ -88,6 +89,7 @@ class CourseDetailViewSerailizer(ModelSerializer):
             'course_name',
             'course_avegrage_ratings',
             'course_videos',
+            'course_thumbnail_url',
             'courseAuthor',
 
 
