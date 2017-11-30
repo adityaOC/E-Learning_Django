@@ -50,16 +50,16 @@ class ItemsSerializer(serializers.Serializer):
 """
 class CourseDetailViewSerailizer(ModelSerializer):
     course_videos = VideoSerializer(source='Video_Relation', many=True)
-    course_ratings = RatingsSerializer(source='Course_Ratings_Relation', many=True)
+    #course_ratings = RatingsSerializer(source='Course_Ratings_Relation', many=True)
     class Meta:
         model = Course
         fields= [
             'id',
             'course_name',
             'course_author',
-            #'course_Ratings',
+            'course_avegrage_ratings',
             'course_videos',
-            'course_ratings',
+            #'course_ratings',
 
 
         ]
@@ -71,7 +71,7 @@ class UpdateRatingsSerializer(ModelSerializer):
     class Meta:
         model = CourseRatings
         fields= [
-            'id',
+            #'id',
             'rating_give_by_user',
 
 
@@ -111,5 +111,5 @@ class UserProfileSerializer(serializers.ModelSerializer):
         user.set_password(validated_data['password'])
         user.save()
 
-    
+
         return user

@@ -86,7 +86,7 @@ class CourseDetailView(RetrieveAPIView):
 
 
 class RatingUpdateView(UpdateAPIView):
-    #permission_classes = [IsAuthenticated,]
+    permission_classes = [IsAuthenticated,]
     queryset = Rating_Course_User_Bridge.objects.all()
     serializer_class = UpdateRatingsSerializer
     serializer = UpdateRatingsSerializer()
@@ -117,7 +117,9 @@ class RatingUpdateView(UpdateAPIView):
         if instance_count > 0:#if record already exist
              #return Response({'message': "record already exist"})
              instance = Rating_Course_User_Bridge.objects.get(course_id=course_primaryKey,user_id = current_user_id)
-             instance.rating_value = request.POST.get("rating_give_by_user", None)
+        
+             #instance.rating_value = request.POST.get("rating_give_by_user", None)
+             instance.rating_value = request.data['rating_give_by_user'];
              instance.save()
 
              total_ratings = Rating_Course_User_Bridge.objects.filter(course_id=course_primaryKey).count()
@@ -142,7 +144,7 @@ class RatingUpdateView(UpdateAPIView):
              user = UserProfile.objects.get(pk=current_user_id)
 
 
-             rating_Value = request.POST.get("rating_give_by_user", None)
+             rating_Value = request.data['rating_give_by_user'];
              rating = Rating_Course_User_Bridge.objects.create(course=course,user=user,rating_value=rating_Value)
 
              #update course models
